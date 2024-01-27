@@ -9,9 +9,12 @@ const ContactList = (props) => {
         return <div>No contacts available</div>; // or any other fallback UI
     }
 
+    const deleteConactHandler = (id) => {
+        props.getContactId(id);
+    };
     const renderContactList = props.contacts.map((contact) => {
         return (
-            <ContactCard contact = {contact}></ContactCard>
+            <ContactCard contact = {contact} clickHander = {deleteConactHandler} key={contact.id}></ContactCard>
         );
     });
 

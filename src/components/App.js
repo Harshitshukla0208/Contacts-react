@@ -1,43 +1,46 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
+import { v4 as uuid } from "uuid";
 import './App.css';
 import Header from "./Header";
 import AddContact from "./AddContact";
 import ContactList from "./ContactList";
 
 function App() {
-    const contacts = [
-        {
-            id: "1",
-            name: "Naman",
-            email: "naman@admin.com"
-        },
-        {
-            id: "2",
-            name: "Samarth",
-            email: "samarth@admin.com"
-        },
-        {
-            id: "3",
-            name: "Priyanshu",
-            email: "priyanshu@admin.com"
-        },
-        {
-            id: "4",
-            name: "Himanshu",
-            email: "himanshu@admin.com"
-        },
-        {
-            id: "5",
-            name: "Prateet",
-            email: "prateet@admin.com"
-        }
+    
+    const LOCAL_STORAGE_KEY = "contacts";
+    const [contacts, setContacts] = useState(
+        JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) ?? []
+    );
+    const addContactHandler = (contact) => {
+        console.log(contact);
+        setContacts([...contacts, { id: uuid(), ...contact }]);
+    };
 
-    ]
+    const removeContactHandler = (id) => {
+        const newContactList = contacts.filter((contact) => {
+            return contact.id !== id;
+        });
+    
+        setContacts(newContactList);
+    };
+
+    useEffect(() => {
+        const retriveContacts = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY))
+        if(retriveContacts) setContacts(retriveContacts);
+    }, []);
+
+
+    //retaing the contacts inside our local storage using useeffect
+    useEffect(() => {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(contacts))
+    }, [contacts]);
+
+
     return (
         <div className="ui container">
             <Header />
-            <AddContact />
-            <ContactList contacts = {contacts}/>
+            <AddContact addContactHandler = {addContactHandler}/>
+            <ContactList contacts={contacts} getContactId={removeContactHandler} />        
         </div>
     )
 }
